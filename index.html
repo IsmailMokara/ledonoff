@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LED Control</title>
+    <style>
+        button {
+            font-size: 20px;
+            padding: 10px 20px;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>ESP32 LED Control</h1>
+    <button id="toggleButton" onclick="toggleLED()">On</button>
+    <p id="status">off</p> <!-- Initial state is 'off' -->
+
+    <script>
+        function toggleLED() {
+            // Toggle the LED state
+            let statusElement = document.getElementById('status');
+            let buttonElement = document.getElementById('toggleButton');
+            let currentState = statusElement.textContent.trim();
+
+            if (currentState === 'off') {
+                statusElement.textContent = 'on';
+                buttonElement.textContent = 'Off'; // Change button text to "Off"
+            } else {
+                statusElement.textContent = 'off';
+                buttonElement.textContent = 'On'; // Change button text to "On"
+            }
+
+            // Optionally, send the new state to the server (depends on server-side implementation)
+            fetch('/update', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'state=' + statusElement.textContent.trim()
+            })
+            .then(response => response.text())
+            .then(data => {
+                console.log(data); // Optionally handle server response
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>
